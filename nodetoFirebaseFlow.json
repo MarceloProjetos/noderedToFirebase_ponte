@@ -1,0 +1,626 @@
+[
+    {
+        "id": "f077bd26.fcfd1",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 590.9090881347656,
+        "y": 938.1818103790283,
+        "wires": []
+    },
+    {
+        "id": "a1aa482d.ee41e8",
+        "type": "catch",
+        "z": "1d8141ae.2e113e",
+        "name": "",
+        "scope": [],
+        "x": 444.9090881347656,
+        "y": 938.1818103790283,
+        "wires": [
+            [
+                "f077bd26.fcfd1"
+            ]
+        ]
+    },
+    {
+        "id": "f44cab7b.740d78",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "Recados",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 605.0000286102295,
+        "y": 470.0000104904175,
+        "wires": []
+    },
+    {
+        "id": "80b0788e.deac68",
+        "type": "firebase.once",
+        "z": "1d8141ae.2e113e",
+        "name": "Carrega recados",
+        "firebaseconfig": "",
+        "childpath": "Recados",
+        "repeatifnull": false,
+        "eventType": "value",
+        "queries": [],
+        "x": 415.00001525878906,
+        "y": 470.00000953674316,
+        "wires": [
+            [
+                "f44cab7b.740d78"
+            ]
+        ]
+    },
+    {
+        "id": "2dda5a8.ce2d3a6",
+        "type": "inject",
+        "z": "1d8141ae.2e113e",
+        "name": "le",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "x": 232.5000228881836,
+        "y": 470.0000190734863,
+        "wires": [
+            [
+                "80b0788e.deac68"
+            ]
+        ]
+    },
+    {
+        "id": "b38d6999.157748",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "004",
+        "firebaseconfig": "",
+        "childpath": "/Recados/004",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1091.7574558258057,
+        "y": 477.81815814971924,
+        "wires": [
+            [
+                "4e2d7f38.ff5ca"
+            ]
+        ]
+    },
+    {
+        "id": "afe8b9e7.0c3e98",
+        "type": "firebase.on",
+        "z": "1d8141ae.2e113e",
+        "name": "Se alguma coisa mudar em recados",
+        "firebaseconfig": "",
+        "childpath": "/Recados",
+        "atStart": true,
+        "eventType": "child_changed",
+        "queries": [],
+        "x": 331.7500305175781,
+        "y": 409.00001525878906,
+        "wires": [
+            [
+                "bb2ae7ff.5682e8"
+            ]
+        ]
+    },
+    {
+        "id": "bb2ae7ff.5682e8",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload",
+        "x": 595.2500457763672,
+        "y": 409.5000171661377,
+        "wires": []
+    },
+    {
+        "id": "f518db0b.0861b8",
+        "type": "firebase auth",
+        "z": "1d8141ae.2e113e",
+        "name": "",
+        "firebaseconfig": "",
+        "x": 360,
+        "y": 560,
+        "wires": [
+            [
+                "1d162264.61995e"
+            ]
+        ]
+    },
+    {
+        "id": "1d162264.61995e",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 660,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "85e41a32.954398",
+        "type": "e-mail in",
+        "z": "1d8141ae.2e113e",
+        "name": "recadosappaltamira@gmail.com",
+        "protocol": "IMAP",
+        "server": "imap.gmail.com",
+        "useSSL": true,
+        "port": "993",
+        "box": "INBOX",
+        "disposition": "Read",
+        "repeat": "60",
+        "x": 219.88890075683594,
+        "y": 700.8888759613037,
+        "wires": [
+            [
+                "2093bf8c.c6a47"
+            ]
+        ]
+    },
+    {
+        "id": "2093bf8c.c6a47",
+        "type": "function",
+        "z": "1d8141ae.2e113e",
+        "name": "Email to JSON",
+        "func": "var email = JSON.parse(msg.html.slice(33,-18));\nmsg.topic = [];\nmsg.header = [];\nmsg.from = [];\nmsg.date = [];\nmsg.html = [];\nmsg.attachments = [];\nlet res =[null,null,null,null,null,null,null,null,null,null,null,null,null];\n\n\nif(email.Documento.VendedorEmail === \"contato@altamira.com.br\"){\n res[0] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"luisbarbi@globo.com\"){\n res[1] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"edson.stefano@altamira.com.br\"){\n res[2] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"clayton.capelatto@altamira.com.br\"){\n res[3] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"luiz.augusto@altamira.com.br\"){\n res[4] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"clayton.capelatto@altamira.com.br\"){\n res[5] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"luiz.soares@altamira.com.br\"){\n res[6] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"vendas.neto@gmail.com\"){\n res[7] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"joao.victor@altamira.com.br\"){\n res[8] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"francisco.carnevale@altamira.com.br\"){\n res[9] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"felipe.rodrigues@altamira.com.br\"){\n res[10] = {payload: email};    \n}\nelse if(email.Documento.VendedorEmail === \"donizete.santos@altamira.com.br\"){\n res[11] = {payload: email};    \n}\nelse {\n res[12] = {payload: email};   \n}\n\n\nreturn res;\n",
+        "outputs": 13,
+        "noerr": 0,
+        "x": 552.3888626098633,
+        "y": 700.5555572509766,
+        "wires": [
+            [
+                "628cc762.152338"
+            ],
+            [
+                "b38d6999.157748"
+            ],
+            [
+                "fc46f76a.67df48"
+            ],
+            [
+                "2ed1eb0.e1c6716"
+            ],
+            [
+                "ea614e81.5824e"
+            ],
+            [
+                "53e8cbe0.0e29d4"
+            ],
+            [
+                "4fab0498.b941fc"
+            ],
+            [
+                "fe1c7506.804c98"
+            ],
+            [
+                "5e1d0f18.ea4cf"
+            ],
+            [
+                "4e25cb66.affa14"
+            ],
+            [
+                "6a663aa7.717244"
+            ],
+            [
+                "d50ff32a.0f491"
+            ],
+            [
+                "191da7d3.28e1f8"
+            ]
+        ]
+    },
+    {
+        "id": "2ed1eb0.e1c6716",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "008",
+        "firebaseconfig": "",
+        "childpath": "/Recados/008",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1090.9489288330078,
+        "y": 574.083535194397,
+        "wires": [
+            [
+                "cdea44a6.5f0518"
+            ]
+        ]
+    },
+    {
+        "id": "d50ff32a.0f491",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "145",
+        "firebaseconfig": "",
+        "childpath": "/Recados/145",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1091.6989288330078,
+        "y": 956.2224769592285,
+        "wires": [
+            [
+                "7f6a4691.6680c8"
+            ]
+        ]
+    },
+    {
+        "id": "fc46f76a.67df48",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "006",
+        "firebaseconfig": "",
+        "childpath": "/Recados/006",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1090.1711502075195,
+        "y": 525.6391448974609,
+        "wires": [
+            [
+                "e96a8162.0e899"
+            ]
+        ]
+    },
+    {
+        "id": "6a663aa7.717244",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "123",
+        "firebaseconfig": "",
+        "childpath": "/Recados/123",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1091.9211463928223,
+        "y": 908.4169301986694,
+        "wires": [
+            [
+                "f91228b1.7e3278"
+            ]
+        ]
+    },
+    {
+        "id": "4e25cb66.affa14",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "122",
+        "firebaseconfig": "",
+        "childpath": "/Recados/122",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1089.6711463928223,
+        "y": 859.6946563720703,
+        "wires": [
+            [
+                "777eec68.5e65c4"
+            ]
+        ]
+    },
+    {
+        "id": "5e1d0f18.ea4cf",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "071",
+        "firebaseconfig": "",
+        "childpath": "/Recados/071",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1091.3933715820312,
+        "y": 811.7779841423035,
+        "wires": [
+            [
+                "c1d29b34.42b828"
+            ]
+        ]
+    },
+    {
+        "id": "ea614e81.5824e",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "012",
+        "firebaseconfig": "",
+        "childpath": "/Recados/012",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1089.9064979553223,
+        "y": 621.9191522598267,
+        "wires": [
+            [
+                "4a0d84b3.1af3bc"
+            ]
+        ]
+    },
+    {
+        "id": "4fab0498.b941fc",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "047",
+        "firebaseconfig": "",
+        "childpath": "/Recados/047",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1091.3383560180664,
+        "y": 716.805549621582,
+        "wires": [
+            [
+                "e0d8e841.a24b98"
+            ]
+        ]
+    },
+    {
+        "id": "fe1c7506.804c98",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "053",
+        "firebaseconfig": "",
+        "childpath": "/Recados/053",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1090.0883560180664,
+        "y": 764.3510074615479,
+        "wires": [
+            [
+                "88cfe852.f23e68"
+            ]
+        ]
+    },
+    {
+        "id": "53e8cbe0.0e29d4",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "043",
+        "firebaseconfig": "",
+        "childpath": "/Recados/043",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1089.4064140319824,
+        "y": 669.5555381774902,
+        "wires": [
+            [
+                "edecc609.3be988"
+            ]
+        ]
+    },
+    {
+        "id": "628cc762.152338",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "001",
+        "firebaseconfig": "",
+        "childpath": "/Recados/001",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1090.0453300476074,
+        "y": 431.86864280700684,
+        "wires": [
+            [
+                "d3e43e6d.473b2"
+            ]
+        ]
+    },
+    {
+        "id": "191da7d3.28e1f8",
+        "type": "firebase modify",
+        "z": "1d8141ae.2e113e",
+        "name": "xxx",
+        "firebaseconfig": "",
+        "childpath": "/Recados/xxx",
+        "method": "push",
+        "value": "msg.payload",
+        "priority": "",
+        "x": 1091.6564140319824,
+        "y": 1004.464635848999,
+        "wires": [
+            [
+                "5dfa9dd8.6381d4"
+            ]
+        ]
+    },
+    {
+        "id": "e0d8e841.a24b98",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "luiz.soares@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1291.9999504089355,
+        "y": 717.1388397216797,
+        "wires": []
+    },
+    {
+        "id": "5dfa9dd8.6381d4",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "xxx",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1221.74995803833,
+        "y": 1004.6389217376709,
+        "wires": []
+    },
+    {
+        "id": "d3e43e6d.473b2",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "contato@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1284.5555419921875,
+        "y": 431.8888854980469,
+        "wires": []
+    },
+    {
+        "id": "4e2d7f38.ff5ca",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "luisbarbi@globo.com",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1273.5555419921875,
+        "y": 477.8888854980469,
+        "wires": []
+    },
+    {
+        "id": "e96a8162.0e899",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "edson.stefano@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1302.5555419921875,
+        "y": 525.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "cdea44a6.5f0518",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "clayton.capelatto@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1311.5555419921875,
+        "y": 573.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "4a0d84b3.1af3bc",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "luiz.augusto@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1300.5555419921875,
+        "y": 621.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "edecc609.3be988",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "vendas.neto@gmail.com",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1280.5555419921875,
+        "y": 669.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "88cfe852.f23e68",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "movittec@yahoo.com",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1272.5555419921875,
+        "y": 763.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "c1d29b34.42b828",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "joao.victor@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1292.5555419921875,
+        "y": 811.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "777eec68.5e65c4",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "francisco.carnevale@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1322.5555419921875,
+        "y": 858.8888549804688,
+        "wires": []
+    },
+    {
+        "id": "f91228b1.7e3278",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "felipe.rodrigues@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1312.5555419921875,
+        "y": 908.4444580078125,
+        "wires": []
+    },
+    {
+        "id": "7f6a4691.6680c8",
+        "type": "debug",
+        "z": "1d8141ae.2e113e",
+        "name": "donizete.santos@altamira.com.br",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1311.5555419921875,
+        "y": 956.4444580078125,
+        "wires": []
+    }
+]
